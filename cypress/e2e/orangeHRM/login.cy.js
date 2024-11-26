@@ -13,8 +13,10 @@ describe('OrangeHRM Login Tests', () => {
     it('TC01: Should login with valid username and password', () => {
       cy.get('[name="username"]').type(validUsername); // Input username
       cy.get('[name="password"]').type(validPassword); // Input password
+      cy.intercept('GET', '**/action-summary').as('actionSummary');
       cy.get('[type="submit"]').click(); // Klik tombol login
-  
+      
+      cy.wait('@actionSummary');// Tunggu request ke login endpoint
       cy.get('h6').contains('Dashboard').should('have.text','Dashboard') // Verifikasi berhasil login
   
       // Tangkap layar untuk hasil tes
@@ -76,6 +78,9 @@ describe('OrangeHRM Login Tests', () => {
     });
 
     it('TC06: Should verify "Forgot Your Password" works correctly', () => {
+        // Intercept untuk request reset password
+        cy.intercept('GET', '**/messages').as('messages');
+
         // Klik link "Forgot your password?"
         cy.contains('Forgot your password?').click();
     
@@ -87,6 +92,9 @@ describe('OrangeHRM Login Tests', () => {
     
         // Klik tombol "Reset Password"
         cy.get('[type="submit"]').click();
+
+        // Tunggu request reset password
+        cy.wait('@messages');
     
         // Verifikasi pesan konfirmasi muncul
         cy.get('[class="orangehrm-card-container"]')
