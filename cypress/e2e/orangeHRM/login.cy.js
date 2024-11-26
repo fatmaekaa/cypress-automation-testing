@@ -13,10 +13,29 @@ describe('OrangeHRM Login Tests', () => {
     it('TC01: Should login with valid username and password', () => {
       cy.get('[name="username"]').type(validUsername); // Input username
       cy.get('[name="password"]').type(validPassword); // Input password
+
+      //Intercept API
       cy.intercept('GET', '**/action-summary').as('actionSummary');
+      cy.intercept('GET', '**/time-at-work*').as('timeAtWork');
+      cy.intercept('GET', '**/shortcuts').as('shortcuts');
+      cy.intercept('GET', '**/feed*').as('feed');
+      cy.intercept('GET', '**/leaves*').as('leaves');
+      cy.intercept('GET', '**/subunit').as('subunit');
+      cy.intercept('GET', '**/location*').as('location');
+      cy.intercept('POST', '**/push').as('push');
+
       cy.get('[type="submit"]').click(); // Klik tombol login
       
-      cy.wait('@actionSummary');// Tunggu request ke login endpoint
+      // Tunggu request ke login endpoint
+      cy.wait('@actionSummary');
+      cy.wait('@timeAtWork');
+      cy.wait('@shortcuts');
+      cy.wait('@feed');
+      cy.wait('@leaves');
+      cy.wait('@subunit');
+      cy.wait('@location');
+      cy.wait('@push');
+
       cy.get('h6').contains('Dashboard').should('have.text','Dashboard') // Verifikasi berhasil login
   
       // Tangkap layar untuk hasil tes
