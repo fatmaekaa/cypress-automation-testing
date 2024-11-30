@@ -12,6 +12,7 @@ describe('OrangeHRM Login Tests', () => {
     });
   
     it('TC01: Should login with valid username and password', () => {
+      loginPage.verifyLoginPage().should('have.text','Login')
       loginPage.inputUsername().type(validUsername); // Input username
       loginPage.inputPassword().type(validPassword); // Input password
 
@@ -40,7 +41,7 @@ describe('OrangeHRM Login Tests', () => {
       loginPage.dashboardPage().should('have.text','Dashboard') // Verifikasi berhasil login
   
       // Tangkap layar untuk hasil tes
-      cy.screenshot('TC01_ValidLogin');
+      cy.screenshot('TC01_LoginPage_ValidLogin');
     });
   
     it('TC02: Should not login with invalid password', () => {
@@ -53,7 +54,7 @@ describe('OrangeHRM Login Tests', () => {
         .should('have.text', 'Invalid credentials');  // Memastikan teks sesuai
   
       // Tangkap layar untuk hasil tes
-      cy.screenshot('TC02_InvalidPassword');
+      cy.screenshot('TC02_LoginPage_InvalidPassword');
     });
   
     it('TC03: Should not login with empty username', () => {
@@ -65,7 +66,7 @@ describe('OrangeHRM Login Tests', () => {
         .and('have.text', 'Required');
   
       // Tangkap layar untuk hasil tes
-      cy.screenshot('TC03_EmptyUsername');
+      cy.screenshot('TC03_LoginPage_EmptyUsername');
     });
   
     it('TC04: Should not login with empty password', () => {
@@ -77,7 +78,7 @@ describe('OrangeHRM Login Tests', () => {
         .and('have.text', 'Required');
   
       // Tangkap layar untuk hasil tes
-      cy.screenshot('TC04_EmptyPassword');
+      cy.screenshot('TC04_LoginPage_EmptyPassword');
     });
   
     it('TC05: Should not login with empty username and password', () => {
@@ -94,35 +95,7 @@ describe('OrangeHRM Login Tests', () => {
         .contains('Required'); // Memastikan pesan "Required" muncul, tanpa mempermasalahkan duplikasi teks
     
       // Tangkap layar untuk hasil tes
-      cy.screenshot('TC05_EmptyUsernameAndPassword');
+      cy.screenshot('TC05_LoginPage_EmptyUsernameAndPassword');
     });
-
-    it('TC06: Should verify "Forgot Your Password" works correctly', () => {
-        // Intercept untuk request reset password
-        cy.intercept('GET', '**/messages').as('messages');
-
-        // Klik link "Forgot your password?"
-        cy.contains('Forgot your password?').click();
-    
-        // Pastikan diarahkan ke halaman reset password
-        cy.url().should('include', '/auth/requestPasswordResetCode');
-    
-        // Masukkan username/email valid
-        loginPage.inputUsername().type(validUsername);
-    
-        // Klik tombol "Reset Password"
-        loginPage.inputButtonSubmit().click();
-
-        // Tunggu request reset password
-        cy.wait('@messages');
-    
-        // Verifikasi pesan konfirmasi muncul
-        cy.get('[class="orangehrm-card-container"]')
-        .should('be.visible')
-        .and('contain.text', 'Reset Password link sent successfully');
-        
-        // Tangkap layar untuk hasil tes
-        cy.screenshot('TC06_ForgotYourPassword');
-      });
   });
   

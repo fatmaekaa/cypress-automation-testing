@@ -1,6 +1,6 @@
 export default class loginPage{
     static verifyLoginPage(){
-        return cy.get('h5').contains('Loginb');
+        return cy.get('h5').contains('Login');
     }
     static dashboardPage(){
         return cy.get('h6').contains('Dashboard');
@@ -13,5 +13,8 @@ export default class loginPage{
     }
     static inputButtonSubmit(){
         return cy.get('[type="submit"]');
+    }
+    static resetPswdSuccess(){
+        return cy.get('h6').contains('Reset Password link sent successfully');
     }
 }
